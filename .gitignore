@@ -1,0 +1,23 @@
+﻿# 环境变量与密钥
+key.env
+*.env
+.env
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+
+# IDE
+.idea/
+.vscode/
+
+# 数据库与生成文件
+*.db
+chroma_*/
+
+# 系统文件
+Thumbs.db
+.DS_Store
