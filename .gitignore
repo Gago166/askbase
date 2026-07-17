@@ -3,12 +3,21 @@ key.env
 *.env
 .env
 
-# Python
-__pycache__/
-*.pyc
+# Python 虚拟环境
 .venv/
 venv/
+env/
+
+# Python 缓存
+__pycache__/
+*.pyc
 *.egg-info/
+
+# 大模型文件
+*.bin
+*.pt
+*.pth
+*.onnx
 
 # IDE
 .idea/
