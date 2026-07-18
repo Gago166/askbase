@@ -30,3 +30,12 @@ chroma_*/
 # 系统文件
 Thumbs.db
 .DS_Store
+
+# 日志
+logs/
+
+# Claude Code
+.claude/
+
+# 临时文件
+push_log.txt
