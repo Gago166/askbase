@@ -25,7 +25,7 @@ from app.repositories.es.value_es_repository import ValueESRepository
 async def lifespan(app: FastAPI):
     """应用生命周期管理"""
     # 启动时初始化所有无状态客户端
-    logger.info("AskBase 启动中...")
+    logger.info("智源问数 启动中...")
     meta_mysql_client_manager.init()
     dw_mysql_client_manager.init()
     qdrant_client_manager.init()
@@ -40,11 +40,11 @@ async def lifespan(app: FastAPI):
     await dw_mysql_client_manager.close()
     await qdrant_client_manager.close()
     await es_client_manager.close()
-    logger.info("AskBase 已关闭")
+    logger.info("智源问数 已关闭")
 
 
 app = FastAPI(
-    title="AskBase",
+    title="智源问数",
     version="1.0.0",
     lifespan=lifespan,
 )

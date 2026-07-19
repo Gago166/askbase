@@ -16,13 +16,13 @@ class TEIEmbeddingClient:
     @property
     def sync_client(self) -> httpx.Client:
         if self._sync_client is None:
-            self._sync_client = httpx.Client(timeout=60.0)
+            self._sync_client = httpx.Client(timeout=60.0, trust_env=False)
         return self._sync_client
 
     @property
     def async_client(self) -> httpx.AsyncClient:
         if self._async_client is None:
-            self._async_client = httpx.AsyncClient(timeout=60.0)
+            self._async_client = httpx.AsyncClient(timeout=60.0, trust_env=False)
         return self._async_client
 
     def _embed(self, texts: list[str]) -> list[list[float]]:

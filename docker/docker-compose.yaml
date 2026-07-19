@@ -5,9 +5,9 @@ services:
     container_name: mysql
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: Atguigu.123
-      MYSQL_USER: atguigu
-      MYSQL_PASSWORD: Atguigu.123
+      MYSQL_ROOT_PASSWORD: Gago.123
+      MYSQL_USER: gago
+      MYSQL_PASSWORD: Gago.123
     ports:
       - "3306:3306"
     volumes:
@@ -24,6 +24,8 @@ services:
     environment:
       discovery.type: single-node
       xpack.security.enabled: "false"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+    mem_limit: 1g
     ports:
       - "9200:9200"
     volumes:
