@@ -1,6 +1,8 @@
+import os
 from dataclasses import dataclass
 from pathlib import Path
 
+from dotenv import load_dotenv
 from omegaconf import OmegaConf
 
 
@@ -78,3 +80,9 @@ config_file = Path(__file__).parents[2] / 'conf' / 'app_config.yaml'
 context = OmegaConf.load(config_file)
 schema = OmegaConf.structured(AppConfig)
 app_config: AppConfig = OmegaConf.to_object(OmegaConf.merge(schema, context))
+
+# 从 .env 加载敏感信息（API Key 等）
+_dotenv_path = Path(__file__).parents[2] / '.env'
+load_dotenv(_dotenv_path)
+if os.getenv('LLM_API_KEY'):
+    app_config.llm.api_key = os.getenv('LLM_API_KEY')
