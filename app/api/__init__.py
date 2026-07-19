@@ -1,8 +1,8 @@
 import json
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Request
-from fastapi.responses import StreamingResponse
+from fastapi import FastAPI
+from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel
 
 from app.agent.graph import build_graph
@@ -108,6 +108,14 @@ def _make_runtime_config():
 
 
 # ---- API 路由 ----
+@app.get("/")
+async def index():
+    """前端页面"""
+    from pathlib import Path
+    static_dir = Path(__file__).parent.parent / "static" / "index.html"
+    return FileResponse(static_dir)
+
+
 @app.post("/ask", response_model=QueryResponse)
 async def ask(request: QueryRequest):
     """同步问数接口"""

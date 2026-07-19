@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>智源问数</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --border: #2a2d3a;
+    --text: #e1e4ed;
+    --text-dim: #8b8fa3;
+    --accent: #6366f1;
+    --accent-glow: rgba(99,102,241,.3);
+    --success: #22c55e;
+    --error: #ef4444;
+    --radius: 12px;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Header */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+  header .logo {
+    width: 36px; height: 36px;
+    background: var(--accent);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 700; color: #fff;
+  }
+  header h1 { font-size: 18px; font-weight: 600; }
+  header .badge { font-size: 12px; color: var(--text-dim); margin-left: auto; }
+
+  /* Messages */
+  main {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .message {
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto;
+    animation: fadeIn .3s ease;
+  }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(8px) } to { opacity:1; transform:translateY(0) } }
+
+  .message.user {
+    align-self: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    font-size: 15px;
+  }
+
+  .message.assistant {
+    align-self: center;
+  }
+
+  /* Steps Timeline */
+  .steps-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 16px;
+  }
+  .steps-panel h3 {
+    font-size: 13px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 8px;
+  }
+  .step-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: var(--bg);
+    color: var(--text-dim);
+    transition: all .3s ease;
+  }
+  .step-item .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    flex-shrink: 0;
+    transition: all .3s ease;
+  }
+  .step-item.running {
+    color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent-glow);
+  }
+  .step-item.running .dot {
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent-glow);
+    animation: pulse 1s infinite;
+  }
+  .step-item.done {
+    color: var(--success);
+  }
+  .step-item.done .dot { background: var(--success); }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .4; }
+  }
+
+  /* Result Table */
+  .result-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .result-panel h3 {
+    font-size: 13px;
+    color: var(--success);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 14px 18px 0;
+  }
+  .table-wrap {
+    overflow-x: auto;
+    padding: 14px 18px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  th {
+    text-align: left;
+    padding: 10px 14px;
+    background: var(--bg);
+    color: var(--text-dim);
+    font-weight: 500;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    border-bottom: 2px solid var(--border);
+  }
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    font-variant-numeric: tabular-nums;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(99,102,241,.05); }
+
+  /* Error */
+  .error-panel {
+    background: rgba(239,68,68,.1);
+    border: 1px solid rgba(239,68,68,.3);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    color: var(--error);
+    font-size: 14px;
+  }
+
+  /* Footer */
+  footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 16px 24px;
+    flex-shrink: 0;
+  }
+  .input-wrap {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    gap: 10px;
+  }
+  .input-wrap input {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    font-size: 15px;
+    color: var(--text);
+    outline: none;
+    transition: border-color .2s;
+  }
+  .input-wrap input:focus { border-color: var(--accent); }
+  .input-wrap input::placeholder { color: var(--text-dim); }
+  .input-wrap button {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    padding: 12px 24px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .2s;
+  }
+  .input-wrap button:hover { opacity: .85; }
+  .input-wrap button:disabled { opacity: .4; cursor: not-allowed; }
+
+  /* Loading spinner */
+  .spinner {
+    display: inline-block;
+    width: 20px; height: 20px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin .6s linear infinite;
+    margin-right: 8px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .typing-indicator {
+    color: var(--text-dim);
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">智</div>
+  <h1>智源问数</h1>
+  <span class="badge">Data Agent</span>
+</header>
+
+<main id="chat"></main>
+
+<footer>
+  <div class="input-wrap">
+    <input id="question" type="text" placeholder="输入你的问题，例如：华北地区各品类销售额是多少？" autofocus>
+    <button id="sendBtn" onclick="ask()">发送</button>
+  </div>
+</footer>
+
+<script>
+const STEPS = [
+  '抽取关键词',
+  '召回字段',
+  '召回指标',
+  '召回字段取值',
+  '合并召回信息',
+  '过滤指标',
+  '过滤表格',
+  '补充上下文',
+  '生成SQL',
+  '校验SQL',
+  '校正SQL',
+  '执行SQL',
+];
+
+const chat = document.getElementById('chat');
+const questionInput = document.getElementById('question');
+const sendBtn = document.getElementById('sendBtn');
+
+questionInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !sendBtn.disabled) ask();
+});
+
+function scrollBottom() {
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function addUserMessage(text) {
+  const div = document.createElement('div');
+  div.className = 'message user';
+  div.textContent = text;
+  chat.appendChild(div);
+  scrollBottom();
+}
+
+function addAssistantBlock() {
+  const div = document.createElement('div');
+  div.className = 'message assistant';
+  chat.appendChild(div);
+  return div;
+}
+
+function renderSteps(container, activeIdx) {
+  let html = '<div class="steps-panel"><h3>执行进度</h3><div class="steps-grid">';
+  STEPS.forEach((name, i) => {
+    let cls = 'step-item';
+    if (i < activeIdx) cls += ' done';
+    else if (i === activeIdx) cls += ' running';
+    html += `<div class="${cls}"><span class="dot"></span>${name}</div>`;
+  });
+  html += '</div></div>';
+  container.innerHTML = html;
+}
+
+function renderTable(container, data) {
+  if (!data || data.length === 0) {
+    container.innerHTML = '<div class="result-panel"><h3>查询结果</h3><div class="table-wrap"><p style="color:var(--text-dim);padding:8px 0">查询无结果</p></div></div>';
+    return;
+  }
+  const cols = Object.keys(data[0]);
+  let html = '<div class="result-panel"><h3>查询结果</h3><div class="table-wrap"><table><thead><tr>';
+  cols.forEach(c => html += `<th>${c}</th>`);
+  html += '</tr></thead><tbody>';
+  data.forEach(row => {
+    html += '<tr>';
+    cols.forEach(c => html += `<td>${row[c] ?? ''}</td>`);
+    html += '</tr>';
+  });
+  html += '</tbody></table></div></div>';
+  container.innerHTML = html;
+}
+
+function renderError(container, msg) {
+  container.innerHTML = `<div class="error-panel">${msg}</div>`;
+}
+
+function renderSpinner(container) {
+  container.innerHTML = '<div class="typing-indicator"><span class="spinner"></span>正在分析中...</div>';
+}
+
+async function ask() {
+  const question = questionInput.value.trim();
+  if (!question || sendBtn.disabled) return;
+
+  questionInput.value = '';
+  sendBtn.disabled = true;
+
+  addUserMessage(question);
+  const block = addAssistantBlock();
+  renderSpinner(block);
+
+  try {
+    const response = await fetch('/ask/stream', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question }),
+    });
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let stepIdx = 0;
+    let resultData = null;
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop(); // keep incomplete line
+
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const payload = line.slice(6).trim();
+        if (payload === '[DONE]') {
+          if (resultData) renderTable(block, resultData);
+          else if (block.querySelector('.steps-panel') && !block.querySelector('.result-panel') && !block.querySelector('.error-panel')) {
+            block.innerHTML += '<p style="color:var(--text-dim);margin-top:8px">查询完成</p>';
+          }
+          continue;
+        }
+
+        try {
+          const msg = JSON.parse(payload);
+          if (msg.type === 'progress' && msg.status === 'running') {
+            const idx = STEPS.indexOf(msg.step);
+            if (idx >= 0) stepIdx = idx;
+            renderSteps(block, stepIdx);
+          } else if (msg.type === 'progress' && msg.status === 'completed') {
+            const idx = STEPS.indexOf(msg.step);
+            if (idx >= 0) stepIdx = idx + 1;
+            renderSteps(block, stepIdx);
+          } else if (msg.type === 'result') {
+            resultData = msg.data;
+          } else if (msg.type === 'error') {
+            renderError(block, msg.message);
+          }
+        } catch (_) { /* skip invalid JSON */ }
+      }
+    }
+
+    // Final render
+    if (block.querySelector('.typing-indicator')) {
+      if (resultData) renderTable(block, resultData);
+    }
+  } catch (e) {
+    renderError(block, `网络错误: ${e.message}`);
+  } finally {
+    sendBtn.disabled = false;
+    questionInput.focus();
+    scrollBottom();
+  }
+}
+</script>
+</body>
+</html>
